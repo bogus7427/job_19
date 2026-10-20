@@ -12,11 +12,24 @@ soup = BeautifulSoup(r.text,"html.parser")
 lis= soup.find_all("li", class_="c_col")
 #print(lis)
 #pirnt(len(lis))
+jobs = []
 
-for il in lis:
+for li in lis:
     try:
-        company =il.find("a", class_="cpname").text
+        company = li.find("a", class_="cpname").text
         title = li.find("div", class_="cell_mid").find("a").text
-        print(title)
+        locatiom = li.find("div", class_="cl_md").find_all("span")[0].text
+        link = li.find("div", class_="cell_mid").find("a").get("href")
+
+        job_dato = {
+            "company": company,
+            "title": title,
+            "location" : locatiom,
+            "link" : link
+        }
+        jobs.append(job_dato)
     except:
         pass
+print(jobs)
+print(len(jobs))
+

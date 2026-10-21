@@ -1,37 +1,133 @@
-<html>
-    <head></head>
-    <body>
-        <h1>{{keyword}} 잡서치결과 페이지입니다.</h1>
-        
-    
-        <table>
-            <thedad>
-                <tr>
-                    <th>순번</th>
-                    <th>회사명</th>
-                    <th>공고제목</th>
-                    <th>회사위치</th>
-                    <th>상세보기</th>
-                </tr>
-            </thedad>
-            <tbody>
-                {% for index,job in jobs %}
-                <tr>
-                    <td>{{ index +1 }}</td>
-                    <td>{{ job["company"] }}</td>
-                    <td>{{ job["title"]}}</td>
-                    <td>{{ job["location"]}}</td>
-                    <td>{{ job["link"]}}</td>
-                </tr>
-                {% endfor %}
-                <tr>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                    <td>5</td>
-                </tr>
-            </tbody>
-        </table>
-    </body>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>{{ keyword }} 채용 검색 결과 | 잡스크레퍼</title>
+    <style>
+        :root {
+            --blue: #1769e0;
+            --navy: #172b4d;
+            --muted: #718096;
+            --line: #e5eaf1;
+            --background: #f5f8fc;
+        }
+
+        * { box-sizing: border-box; }
+        body { margin: 0; color: var(--navy); background: var(--background); font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+        .topbar { height: 72px; display: flex; align-items: center; background: #fff; border-bottom: 1px solid var(--line); }
+        .topbar-inner, main, .footer-inner { width: min(1100px, calc(100% - 40px)); margin: 0 auto; }
+        .topbar-inner { display: flex; align-items: center; gap: 46px; }
+        .brand { color: var(--blue); font-size: 25px; font-weight: 900; letter-spacing: -1.5px; text-decoration: none; white-space: nowrap; }
+        nav { display: flex; gap: 28px; }
+        nav a { color: #4d5b70; text-decoration: none; font-size: 14px; font-weight: 700; }
+        main { padding: 42px 0 76px; }
+        .heading { margin-bottom: 25px; }
+        .eyebrow { color: var(--blue); font-size: 13px; font-weight: 800; letter-spacing: 1.4px; }
+        h1 { margin: 10px 0 8px; font-size: clamp(27px, 4vw, 36px); letter-spacing: -1.5px; }
+        .heading p { margin: 0; color: var(--muted); font-size: 15px; }
+        .query { color: var(--blue); }
+        .search-panel { margin-bottom: 22px; padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 14px; }
+        .search-row { display: flex; gap: 10px; }
+        .search-row input { min-width: 0; flex: 1; height: 50px; padding: 0 15px; border: 1px solid #ccd6e3; border-radius: 8px; color: var(--navy); font: inherit; font-size: 15px; outline: none; }
+        .search-row input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(23, 105, 224, .12); }
+        .search-row button { min-width: 112px; padding: 0 18px; border: 0; border-radius: 8px; background: var(--blue); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+        .results { overflow: hidden; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 8px 26px rgba(29, 57, 94, .05); }
+        .results-top { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-bottom: 1px solid var(--line); }
+        .results-top strong { font-size: 16px; }
+        .results-top span { color: var(--muted); font-size: 13px; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        thead { background: #f8faff; }
+        th { padding: 14px 16px; color: #5e6d82; font-size: 13px; font-weight: 700; white-space: nowrap; }
+        td { padding: 17px 16px; border-top: 1px solid #edf0f5; color: #46566d; font-size: 14px; }
+        tbody tr:hover { background: #fbfdff; }
+        .number { width: 72px; color: #8995a5; text-align: center; }
+        .company { min-width: 150px; font-weight: 700; }
+        .job-title { min-width: 260px; color: var(--navy); font-weight: 700; }
+        .location { min-width: 140px; }
+        .detail-link { display: inline-block; padding: 8px 12px; border: 1px solid #cfe0fa; border-radius: 7px; color: var(--blue); text-decoration: none; font-size: 13px; font-weight: 700; white-space: nowrap; }
+        .detail-link:hover { background: #edf5ff; }
+        .empty { padding: 48px 20px; color: var(--muted); text-align: center; line-height: 1.7; }
+        .back-link { display: inline-block; margin-top: 20px; color: var(--blue); font-size: 14px; font-weight: 700; text-decoration: none; }
+        footer { padding: 22px 0; background: #fff; border-top: 1px solid var(--line); color: #8793a4; font-size: 12px; }
+        @media (max-width: 600px) {
+            .topbar-inner, main, .footer-inner { width: min(100% - 28px, 1100px); }
+            .topbar-inner { justify-content: space-between; gap: 12px; }
+            nav { gap: 14px; }
+            nav a { font-size: 12px; }
+            main { padding: 32px 0 54px; }
+            .search-row button { min-width: 88px; padding: 0 12px; }
+            .results-top { align-items: flex-start; gap: 8px; flex-direction: column; }
+            th, td { padding: 13px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a class="brand" href="/">잡스크레퍼</a>
+            <nav aria-label="주요 메뉴">
+                <a href="/">채용정보</a>
+                <a href="/">기업정보</a>
+                <a href="/">커리어</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="heading">
+            <span class="eyebrow">JOB SEARCH</span>
+            <h1><span class="query">{{ keyword }}</span> 검색 결과</h1>
+            <p>찾으시는 채용 공고를 확인해 보세요.</p>
+        </section>
+
+        <section class="search-panel" aria-label="채용정보 다시 검색">
+            <form class="search-row" action="/search" method="get">
+                <input type="search" name="keyword" value="{{ keyword }}" placeholder="직무, 회사명, 지역을 입력해 주세요" aria-label="검색어" required>
+                <button type="submit">다시 검색</button>
+            </form>
+        </section>
+
+        <section class="results" aria-label="검색 결과 목록">
+            <div class="results-top">
+                <strong>채용 공고</strong>
+                <span>검색어: {{ keyword }}</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="number">순번</th>
+                            <th>회사명</th>
+                            <th>공고 제목</th>
+                            <th>회사 위치</th>
+                            <th>상세보기</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for index, job in jobs %}
+                        <tr>
+                            <td class="number">{{ index + 1 }}</td>
+                            <td class="company">{{ job["company"] }}</td>
+                            <td class="job-title">{{ job["title"] }}</td>
+                            <td class="location">{{ job["location"] }}</td>
+                            <td><a class="detail-link" href="{{ job['link'] }}" target="_blank" rel="noopener noreferrer">공고 보기 ↗</a></td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td class="empty" colspan="5">검색 결과가 없습니다.<br>다른 검색어로 다시 찾아보세요.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <a class="back-link" href="/">← 검색 첫 화면으로</a>
+    </main>
+
+    <footer><div class="footer-inner">잡스크레퍼 · 채용정보 검색 서비스</div></footer>
+</body>
 </html>

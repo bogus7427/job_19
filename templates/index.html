@@ -1,15 +1,174 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="theme-color" content="#ffffff">
+    <title>잡스크레퍼 | 채용정보 검색</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --blue: #1769e0;
+            --navy: #172b4d;
+            --muted: #718096;
+            --line: #e5eaf1;
+            --background: #f5f8fc;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            color: var(--navy);
+            background: var(--background);
+            font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+        }
+
+        .topbar {
+            height: 72px;
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .topbar-inner, main, .footer-inner {
+            width: min(1100px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        .topbar-inner { display: flex; align-items: center; gap: 46px; }
+
+        .brand {
+            color: var(--blue);
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        nav { display: flex; gap: 28px; }
+        nav a { color: #4d5b70; text-decoration: none; font-size: 14px; font-weight: 700; }
+
+        main { padding: 56px 0 80px; }
+
+        .intro { text-align: center; margin-bottom: 30px; }
+        .eyebrow { color: var(--blue); font-size: 13px; font-weight: 800; letter-spacing: 1.4px; }
+        h1 { margin: 12px 0 10px; font-size: clamp(30px, 5vw, 42px); letter-spacing: -2px; }
+        .intro p { margin: 0; color: var(--muted); font-size: 16px; }
+
+        .search-panel {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 30px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 12px 34px rgba(29, 57, 94, .07);
+        }
+
+        .search-label { display: block; margin: 0 0 12px 2px; font-size: 15px; font-weight: 800; }
+        .search-row { display: flex; gap: 10px; }
+
+        .search-row input {
+            min-width: 0;
+            flex: 1;
+            height: 58px;
+            padding: 0 18px;
+            border: 1px solid #ccd6e3;
+            border-radius: 9px;
+            color: var(--navy);
+            font: inherit;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-row input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(23, 105, 224, .12); }
+        .search-row input::placeholder { color: #9aa6b6; }
+
+        .search-row button {
+            min-width: 132px;
+            padding: 0 23px;
+            border: 0;
+            border-radius: 9px;
+            background: var(--blue);
+            color: white;
+            font: inherit;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .search-row button:hover { background: #0d58c6; }
+        .popular { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; margin-top: 20px; }
+        .popular strong { margin-right: 3px; font-size: 13px; }
+        .tag { padding: 8px 12px; border: 1px solid var(--line); border-radius: 20px; color: #526278; font-size: 13px; }
+
+        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 850px; margin: 24px auto 0; }
+        .info-card { padding: 21px; background: #fff; border: 1px solid var(--line); border-radius: 13px; }
+        .info-card b { display: block; margin-bottom: 7px; font-size: 15px; }
+        .info-card span { color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+        footer { padding: 22px 0; background: #fff; border-top: 1px solid var(--line); color: #8793a4; font-size: 12px; }
+
+        @media (max-width: 600px) {
+            .topbar-inner, main, .footer-inner { width: min(100% - 28px, 1100px); }
+            .topbar-inner { justify-content: space-between; gap: 12px; }
+            nav { gap: 14px; }
+            nav a { font-size: 12px; }
+            main { padding: 40px 0 56px; }
+            .intro p { font-size: 14px; }
+            .search-panel { padding: 20px 16px; border-radius: 14px; }
+            .search-row { flex-direction: column; }
+            .search-row button { height: 52px; }
+            .info-grid { grid-template-columns: 1fr; gap: 10px; }
+        }
+    </style>
 </head>
 <body>
-    <h1>안녕하세요 잡스크레퍼입니다.</h1>
-    <form action="/search">
-    <input type="text" name="keyword" />
-    <button>검색하기</button> 
-    </form>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a class="brand" href="/">잡스크레퍼</a>
+            <nav aria-label="주요 메뉴">
+                <a href="/">채용정보</a>
+                <a href="/">기업정보</a>
+                <a href="/">커리어</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="intro">
+            <span class="eyebrow">JOB SEARCH</span>
+            <h1>좋은 일자리, 한 번에 찾아보세요</h1>
+            <p>원하는 직무나 회사 이름으로 채용 공고를 검색해 보세요.</p>
+        </section>
+
+        <section class="search-panel" aria-label="채용정보 검색">
+            <form action="/search" method="get">
+                <label class="search-label" for="keyword">어떤 채용정보를 찾고 계신가요?</label>
+                <div class="search-row">
+                    <input id="keyword" type="search" name="keyword" placeholder="직무, 회사명, 지역을 입력해 주세요" required>
+                    <button type="submit">검색하기</button>
+                </div>
+            </form>
+            <div class="popular" aria-label="검색 예시">
+                <strong>검색 예시</strong>
+                <span class="tag">마케팅</span>
+                <span class="tag">개발자</span>
+                <span class="tag">디자인</span>
+                <span class="tag">서울</span>
+            </div>
+        </section>
+
+        <section class="info-grid" aria-label="검색 안내">
+            <article class="info-card"><b>간편한 키워드 검색</b><span>관심 있는 직무나 회사 이름을 입력해 공고를 찾아보세요.</span></article>
+            <article class="info-card"><b>채용정보 모아보기</b><span>검색 결과에서 회사와 공고 제목을 한눈에 확인할 수 있어요.</span></article>
+            <article class="info-card"><b>새로운 기회 발견</b><span>키워드를 바꿔가며 나에게 맞는 채용 기회를 살펴보세요.</span></article>
+        </section>
+    </main>
+
+    <footer><div class="footer-inner">잡스크레퍼 · 채용정보 검색 서비스</div></footer>
 </body>
 </html>
